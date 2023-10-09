@@ -8,7 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	pb "github.com/VicenteRuizA/proto/tree/ruiz/severity"
+	pb "github.com/VicenteRuizA/proto"
 )
 
 const (
@@ -17,7 +17,10 @@ const (
 )
 
 var (
-	addr = flag.String("addr", "localhost:50051", "ip address to connect to")
+
+    // NOTAR: se asume servidor en vm 50, de ahi la ip:puerto
+    // ip se establece aqui, puerto en servidor.
+	addr = flag.String("addr", "10.6.46.60:50051", "ip address to connect to")
 	name = flag.String("name", defaultname, "Name to report")
 	condition = flag.String("condition", defaultcondition, "Condition to report")
 )
@@ -27,8 +30,9 @@ func main() {
 	// Asignar variables si es que existe flag al compilar
 	flag.Parse()
 
-	// Crear connection por el mismo puerto del listener del servidor
-	conn, err := grpc.Dial(*addr, grpc.WithTrasportCredentials(insecure.NewCredentials()))
+	
+    // Crear connection por el mismo puerto del listener del servidor
+    conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil{
 		log.Fatalf("fallo la conexion: %v", err)
 	}
@@ -75,21 +79,10 @@ func main() {
 	{} en vez de ()
 	*/
 
-	r, err := IdentifyCondition(ctx, &pb.SeverityRequest{Name == *name, Condition == *condition})
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    r, err := c.IdentifyCondition(ctx, &pb.SeverityRequest{Name : *name, Condition : *condition})
+    if err != nil{
+        log.Fatalf("could not greet: %v", err)
+    }	
+    log.Printf("Greeting: %s", r.GetMessage())
 	
 }
